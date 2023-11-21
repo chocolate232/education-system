@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <!-- 配置Log4j日志记录 -->
+        <setting name="logImpl" value="LOG4J"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <!-- 设置类型别名的包路径 -->
+    <typeAliases>
+        <package name="com.lyc.bean" /> <!-- 设置实体类的包路径，会自动扫描并注册该包下的所有类为类型别名 -->
+    </typeAliases>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}" />
+                <property name="url" value="${jdbc.url}" />
+                <property name="username" value="${jdbc.username}" />
+                <property name="password" value="${jdbc.password}" />
+            </dataSource>
+        </environment>
+
+
+        <environment id="test">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}" />
+                <property name="url" value="${jdbc.url}" />
+                <property name="username" value="${jdbc.username}" />
+                <property name="password" value="${jdbc.password}" />
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 设置 Mapper 文件的位置 -->
+    <mappers>
+        <!--   <mapper resource="mapper/UserMapper.xml" />     单个 XML Mapper 文件的配置 -->
+
+          <package name="com.lyc.dao" />    <!--     指定 Mapper 接口所在的包，会自动扫描并加载该包下的所有接口 -->
+    </mappers>
+
+
+</configuration>

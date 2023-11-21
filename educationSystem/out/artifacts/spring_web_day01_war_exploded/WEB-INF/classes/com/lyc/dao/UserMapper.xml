@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.dao.UserMapper">
+    <!-- 字段 -->
+    <sql id="Field">
+       id,
+        name,
+        username,
+        password
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="FieldValue">
+    #{id},
+        #{name},
+        #{username},
+        #{password}
+    </sql>
+
+    <!--查询用户的账号是否存在-->
+    <select id="queryUserByName"  resultType="User">
+        select <include refid="Field"></include>  from user where username = #{username}
+    </select>
+
+    <!--新增-注册用户-->
+    <insert id="register" parameterType="User">
+        insert into user(<if test="id!=0">
+        id,</if>
+        name,
+        username,
+        password )
+        values ( <if test="id!=0">
+        #{id},</if>
+        #{name},
+        #{username},
+        #{password});
+
+
+    </insert>
+<insert id="insertUserRole" >
+    insert into user_role(u_id,r_id)
+    values (#{u_id},#{r_id});
+</insert>
+    <resultMap id="userRoleMap" type="user">
+        <id property="id" column="id"></id>
+        <result column="name" property="name"/>
+        <result column="username" property="username"/>
+        <collection property="roles" ofType="Role">
+            <id property="id" column="id"></id>
+            <result column="rolename" property="rolename"/>
+        </collection>
+    </resultMap>
+
+    <!--登录-->
+    <select id="login" parameterType="java.util.Map" resultMap="userRoleMap">
+        SELECT a.id ,a.name name, a.username ,c.id rid, c.rolename rolename
+        FROM user a
+                 LEFT JOIN user_role b
+                           on a.id = b.u_id
+                 LEFT JOIN  role c
+                            on c.id = b.r_id
+        JOIN role_menu m
+         on c.id=m.role_id
+        where a.username = #{username}
+          and a.password = #{password}
+    </select>
+
+    <select id="searchAllUser" resultType="User">
+        select * from user
+    </select>
+
+    <delete id="deleteUser">
+        delete from user where id=#{id}
+    </delete>
+    <update id="updateUser" parameterType="User">
+        update user set<if test="name!=null"> name=#{name}</if>
+                        <if test="username!=null"> username=#{username},</if>
+                        <if test="password">password=#{password}</if>
+                         where id=#{id}
+    </update>
+
+</mapper>

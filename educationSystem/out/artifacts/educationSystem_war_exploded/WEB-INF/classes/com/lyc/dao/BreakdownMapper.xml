@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyc.dao.BreakdownMapper">
+    <!-- 添加故障 -->
+    <insert id="insertBreakdown" parameterType="java.util.Map">
+        insert into breakdown(breakdownId,classRoom,breakdownTitle,breakdownContent,createBy,createTime)
+        values (#{breakdownId},#{classRoom},#{breakdownTitle},#{breakdownContent},#{createBy},#{createTime});
+    </insert>
+    <!-- 修改故障(任课教师只能修改自己提交的故障) -->
+    <update id="updateBreakdown" parameterType="java.util.Map">
+        update breakdown set
+        classRoom = #{classRoom},
+        breakdownTitle = #{breakdownTitle},
+        breakdownContent = #{breakdownContent}
+        where breakdownId = #{breakdownId}
+        and createBy = #{createBy}
+    </update>
+    <!-- 删除故障 -->
+    <delete id="deleteBreakdown">
+        delete from breakdown where breakdownId = #{breakdownId}
+    </delete>
+    <!-- 查询故障 -->
+    <select id="selectBreakdown" parameterType="java.util.Map" resultType="Breakdown">
+        SELECT
+        CASE
+        when a.breakdownState = 0 then '未处理'
+        when a.breakdownState = 1	then '处理中'
+        ELSE '处理完成' END breakdownState,a.*,IFNULL(b.solveName,'暂无人解决') as solveName
+        FROM(
+            SELECT b.*,user_Name as createName
+            FROM breakdown b
+            INNER JOIN sys_user u
+            where b.createBy = u.id
+            <if test="breakdownTitle!='' and breakdownTitle!=null">
+                and breakdownTitle like CONCAT("%",#{breakdownTitle},"%")
+            </if>
+            <if test="classRoom!='' and classRoom!=null">
+                and classRoom like CONCAT("%",#{classRoom},"%")
+            </if>
+            <if test="breakdownState!='' and breakdownState!=null">
+                and breakdownState = #{breakdownState}
+            </if>
+            <if test="createBy!='' and createBy!=null">
+                and createBy = #{createBy}
+            </if>
+            <if test="solveBy!=null and solveBy!=''">
+                AND solveBy = #{solveBy}
+            </if>
+        )a
+        LEFT JOIN (
+            SELECT breakdownId,user_Name AS solveName
+            FROM breakdown b
+            INNER JOIN sys_user u
+            where b.solveBy = u.id
+            <if test="breakdownTitle!='' and breakdownTitle!=null">
+                and breakdownTitle like CONCAT("%",#{breakdownTitle},"%")
+            </if>
+            <if test="classRoom!='' and classRoom!=null">
+                and classRoom like CONCAT("%",#{classRoom},"%")
+            </if>
+            <if test="breakdownState!='' and breakdownState!=null">
+                and breakdownState = #{breakdownState}
+            </if>
+            <if test="createBy!='' and createBy!=null">
+                and createBy = #{createBy}
+            </if>
+            <if test="solveBy!=null and solveBy!=''">
+                AND solveBy = #{solveBy}
+            </if>
+        )b
+        on a.breakdownId = b.breakdownId
+        ORDER BY a.createTime DESC
+        limit ${page},${rows}
+    </select>
+    <select id="selectBreakdownCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(*)
+        FROM(
+        SELECT b.*,userName as createName
+        FROM breakdown b
+        INNER JOIN userinfo u
+        where b.createBy = u.userId
+        <if test="breakdownTitle!='' and breakdownTitle!=null">
+            and breakdownTitle like CONCAT("%",#{breakdownTitle},"%")
+        </if>
+        <if test="classRoom!='' and classRoom!=null">
+            and classRoom like CONCAT("%",#{classRoom},"%")
+        </if>
+        <if test="breakdownState!='' and breakdownState!=null">
+            and breakdownState = #{breakdownState}
+        </if>
+        <if test="createBy!='' and createBy!=null">
+            and createBy = #{createBy}
+        </if>
+        <if test="solveBy!=null and solveBy!=''">
+            AND solveBy = #{solveBy}
+        </if>
+        )a
+        LEFT JOIN (
+        SELECT breakdownId,userName AS solveName
+        FROM breakdown b
+        INNER JOIN userinfo u
+        where b.solveBy = u.userId
+        <if test="breakdownTitle!='' and breakdownTitle!=null">
+            and breakdownTitle like CONCAT("%",#{breakdownTitle},"%")
+        </if>
+        <if test="breakdownState!='' and breakdownState!=null">
+            and breakdownState = #{breakdownState}
+        </if>
+        <if test="classRoom!='' and classRoom!=null">
+            and classRoom like CONCAT("%",#{classRoom},"%")
+        </if>
+        <if test="createBy!='' and createBy!=null">
+            and createBy = #{createBy}
+        </if>
+        <if test="solveBy!=null and solveBy!=''">
+            AND solveBy = #{solveBy}
+        </if>
+        )b
+        on a.breakdownId = b.breakdownId
+        ORDER BY a.createTime DESC
+    </select>
+    <!--先查询这个故障有无人处理-->
+    <select id="selectSloveBy" resultType="int">
+        SELECT COUNT(solveBy)
+        FROM breakdown
+        where breakdownId = #{breakdownId}
+    </select>
+    <!--值班教师修改故障状态和故障人-->
+    <update id="updateBreakdownState" parameterType="java.util.Map">
+        update breakdown set
+        solveBy = #{sovleBy},
+        solveTime = #{solveTime},
+        breakdownState = #{breakdownState}
+        where breakdownId = #{breakdownId}
+    </update>
+    <!--管理员修改故障状态-->
+    <update id="adminUpdateState" parameterType="java.util.Map">
+        update breakdown set
+        solveTime = #{solveTime},
+        breakdownState = #{breakdownState}
+        where breakdownId = #{breakdownId}
+    </update>
+</mapper>

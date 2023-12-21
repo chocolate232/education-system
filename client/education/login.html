@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/login.css">
+    <script src="./js/jquery-3.3.1.min.js"></script>
+    <script src="./js/public.js"></script>
+</head>
+
+<body>
+    <div>
+        <div class='login_form'>
+            <div>
+                <div class='login_switch_button'>
+                    <div class='login_switch_button_line'>
+                        <button>登录</button>
+                    </div>
+                    <div class='login_switch_button_line'>
+                        <button>注册</button>
+                    </div>
+
+                </div>
+            </div>
+            <h1 class='login_label'>
+                login
+            </h1>
+            <div class='input_margin'>
+                <div class='input_size'>
+                    <input placeholder='账号' onChange={handleInput} name='name' id="name">
+                    </input>
+                </div>
+            </div>
+            <div class='input_margin'>
+                <div class='input_size'>
+                    <input placeholder='密码' onChange={handleInput} name='password' id="password">
+                    </input>
+                </div>
+            </div>
+            <div class='login_button_margin'>
+                <div class='login_button_size'>
+                    <button onClick=login()> 登录</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    $(document).ready(function () {
+        $(".login_switch_button_line>button").hover(
+            function () {
+                $(this).css("background-color", "#fcedfc");
+            },
+            function () {
+                $(this).css("background-color", "#fff");
+            }
+        );
+        $(".login_switch_button_line:last-child>button").click(
+            function () {
+                location.href = "register.html";
+            }
+        )
+        login = () => {
+            var geturl=url+user.login;
+            console.log(geturl)
+            var name = $("#name").val()
+            var password = $("#password").val()
+            var parm = {
+                "username": name,
+                "password": password
+            }
+            $.ajax({
+                url: geturl,
+                type: "post",
+                contentType: 'application/json',
+                data: JSON.stringify(parm),
+                success: function (res) {
+                    if (res.data.state === "200") {
+                        var storage = window.localStorage;
+                        //storage.setItem("Authorization",res.data.token);
+                        storage.setItem("userid", res.data.user.id);
+                        storage.setItem("username", res.data.user.username);
+                        storage.setItem("name", res.data.user.name);
+                        console.log(res.data.user.username);
+                        storage.setItem("roleId", res.data.user.roles[0].id);
+                        console.log(res.data.user.roles[0].id);
+                        storage.setItem("roleName", res.data.user.roles[0].rolename);
+                        console.log(storage)
+                        storage.setItem("token", res.data.token);
+                        location.href = "index.html"
+                    } else {
+                        alert('账号或密码错误！');
+                    }
+                }
+            })
+
+
+        }
+    });
+
+
+</script>

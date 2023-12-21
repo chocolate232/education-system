@@ -1,0 +1,12 @@
+.index-panel{
+    width: 15%;
+    display: inline-block;
+}
+.index-table{
+    width: 70%;
+    display: inline-block;
+    position: absolute;
+}
+.index-margin{
+    margin: 10px 0;
+}

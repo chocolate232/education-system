@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+    <div style="background-color: black;display: flex; justify-content: space-between; padding: 10px;height: 116px;width: 100%;margin: 0;font-size: 2rem;
+    text-transform: uppercase;font-weight: 700;">
+        <div style="color: #fff;display: flex;align-items: center;margin-left: 1%;"> xx在线教育平台</div>
+            <div  style="color: #fff; display: flex;align-items: center;margin-right: 10%;">欢迎登录
+            <span id="welcome" style="color: #ff8a1f;"></span></div>
+    </div>
+    <div>
+        <div>
+            <div style="width: 50%;margin: 0 auto;padding: 2rem;">
+                <form action="" style="display: flex; margin: 1rem;">
+                    <input type="text" style="width: 100%;height: 50px;">
+                    <button style="background-color: #126f9a;
+                    border: 0;
+                    border-radius: 0 5px 5px 0;
+                    color: #fff;
+                    font-size: 1rem;
+                    font-weight: 700;">search</button>
+                </form>
+            </div>
+
+            </div>
+        <!-- 菜单 -->
+        <div style="display: flex;">
+            <div style="border-top: 1px solid #d2d2d2; display: inline-block;width: 19%; height: 100%;">
+                <div style="text-align: center">菜单</div>
+                <div id="menu" style=" overflow: auto;text-align: center;"  >
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+
+    <script src="js/public.js"></script>
+</body>
+</html>
+<script>
+    $("#welcome").html("("+localStorage.getItem("roleName")+")，"+localStorage.getItem("name"));
+    var token=localStorage.getItem("token")
+    $.ajax({
+        type: "get",
+        url: url+user.menu,
+        headers:{
+            "Authorization":token
+        },
+        data:{
+            "id":localStorage.getItem("userid")
+        },
+        success: function (res) {
+            console.log(res)
+            for (let i=0;i<res.length;i++){
+                $("#menu").append("<div style='margin: 1 rem;border: 1px solid #ebebeb;background-color: #f6f6f6 ;padding: 10px;cursor: pointer'><a href='/education"+res[i].urlname+"'>"+res[i].menuname+"</a></div>")
+            }
+        }
+    })
+
+    console.log(url+user.list)
+    $.ajax({
+        type: "get",
+        url: url+user.list,
+        headers:{
+            "Authorization":token
+        },
+        success: function (res) {
+            console.log(res)
+            res.data.user.forEach(element => {
+                console.log(element)
+                $("#list").append(`<div style="box-shadow: 0 2px 4px rgba(0,0,0,.16) ; background-color:#fff;display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,.125);">
+                        <div style="padding: 10px;display: flex;">
+                            <div style="width: 20%;">
+                                ${element.name}
+                            </div>
+                            <div style="width: 20%;">
+                                ${element.username}
+                            </div>
+                            <div style="width: 20%;">
+                               ${element.password}
+                            </div>
+                            <div style="width: 20%;">
+                               ${element.roles[0].rolename}
+                            </div>
+                            <div style="width: 20%;">
+                                <button onclick="delete1(${element.id})">删除</button>
+                            </div>
+                        </div>
+                    <div>`
+)
+            });
+        }
+    })
+    var delete1=(id)=>{
+        $.ajax({
+        url: url+user.delete,
+        data:{
+            "id":id
+        },
+        success: function (res) {
+            alert(res.data.msg)
+            location.reload()
+        }
+    })
+    }
+</script>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css">
+    <script src="./css/bootstrap-5.3.0-alpha1-dist/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <div style="background-color: black;display: flex; justify-content: space-between; padding: 10px;height: 116px;width: 100%;margin: 0;font-size: 2rem;
+    text-transform: uppercase;font-weight: 700;">
+        <div style="color: #fff;display: flex;align-items: center;margin-left: 1%;"> xx在线教育平台</div>
+        <div style="color: #fff; display: flex;align-items: center;margin-right: 10%;">欢迎登录
+            <span id="welcome" style="color: #ff8a1f;"></span>
+        </div>
+    </div>
+    <div>
+        <div>
+            <div style="width: 50%;margin: 0 auto;padding: 2rem;">
+                <div action="" style="display: flex; margin: 1rem;">
+                    <input type="text" style="width: 100%;height: 50px;" id="searchUser">
+                    <button style="background-color: #126f9a;
+                    border: 0;
+                    border-radius: 0 5px 5px 0;
+                    color: #fff;
+                    font-size: 1rem;
+                    font-weight: 700;" onclick="search()">search</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- 菜单 -->
+        <div style="display: flex;">
+            <div style="border-top: 1px solid #d2d2d2; display: inline-block;width: 19%; height: 100%;">
+                <div style="text-align: center">菜单</div>
+                <div id="menu" style=" overflow: auto;text-align: center;">
+
+                </div>
+
+            </div>
+
+            <div style="width: 80%; background-color: #f8f8f8; padding:15px">
+                <div style="margin: 20px;"> 共查询到 <span></span> 条数据</div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    data-bs-whatever="@mdo">新增角色</button>
+                <div id="list" style="padding: 0 1rem;">
+                    <div
+                        style="box-shadow: 0 2px 4px rgba(0,0,0,.16) ; background-color:#fff;display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,.125);">
+                        <div style="padding: 10px;display: flex;">
+                            <div style="width: 20%;">
+                                姓名
+                            </div>
+                            <div style="width: 20%;">
+                                账号
+                            </div>
+                            <div style="width: 20%;">
+                                密码
+                            </div>
+                            <div style="width: 20%;">
+                                角色
+                            </div>
+                            <div style="width: 20%;">
+                                操作
+                            </div>
+
+                        </div>
+                        <div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">新增角色e</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">姓名:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">账号:</label>
+                            <input type="text" class="form-control" id="recipient-username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">密码:</label>
+                            <input type="text" class="form-control" id="recipient-password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">角色:</label>
+                            <select class="form-select" aria-label="Default select example" id="recipient-role">
+                                <option selected>请选择角色</option>
+                                <option value="管理员">管理员</option>
+                                <option value="教师">教师</option>
+                                <option value="用户">用户</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addRole()">Send message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="js/public.js"></script>
+</body>
+
+</html>
+<script>
+    $("#welcome").html("(" + localStorage.getItem("roleName") + ")，" + localStorage.getItem("name"));
+    var token = localStorage.getItem("token")
+    $.ajax({
+        url: url + user.menu,
+        headers: {
+            "Authorization": token
+        },
+        data: {
+            "id": localStorage.getItem("userid")
+        },
+        success: function (res) {
+            for (let i = 0; i < res.length; i++) {
+                $("#menu").append("<div style='margin: 1 rem;border: 1px solid #ebebeb;background-color: #f6f6f6 ;padding: 10px;cursor: pointer'><a href='/education" + res[i].urlname + "'>" + res[i].menuname + "</a></div>")
+            }
+        }
+    })
+    console.log(url + user.list)
+
+    $.ajax({
+        url: url + user.list,
+        headers: {
+            "Authorization": token
+        },
+        success: function (res) {
+            console.log(res.data)
+            res.forEach(element => {
+                $("#list").append(`<div style="box-shadow: 0 2px 4px rgba(0,0,0,.16) ; background-color:#fff;display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,.125);">
+                        <div style="padding: 10px;display: flex;">
+                            <div style="width: 20%;">
+                                ${element.name}
+                            </div>
+                            <div style="width: 20%;">
+                                ${element.username}
+                            </div>
+                            <div style="width: 20%;">
+                               ${element.password}
+                            </div>
+                            <div style="width: 20%;">
+
+                            </div>
+                            <div style="width: 20%;">
+                                <button onclick="update(${element.id})">修改</button>
+                                <button onclick="delete1(${element.id})">删除</button>
+                            </div>
+                        </div>
+                    <div>`
+                )
+            });
+        }
+    })
+    var addRole = () => {
+
+        var name = $("#recipient-name").val()
+        var username = $("#recipient-username").val()
+        var password = $("#recipient-password").val()
+        var role = $("#recipient-role option:selected").val()
+        console.log(name, username, password, role)
+        if (role == "请选择角色") {
+            alert("请选择角色")
+        } else if (name == "") {
+            alert("请输入姓名")
+        } else if (username == "") {
+            alert("请输入账号")
+        } else if (password == "") {
+            alert("请输入密码")
+        } else {
+            var geturl = url + user.add
+            var parm = {
+                "username": username,
+                "password": password,
+                "name": name,
+                "role": role
+            }
+            $.ajax({
+                url: geturl,
+                type: "post",
+                contentType: 'application/json',
+                headers: {
+                    "Authorization": token
+                },
+                data: JSON.stringify(parm),
+                success: function (res) {
+                    if (res.data.state == 400) {
+                        alert("账号已存在")
+                    }
+                    else if (res.data.state == 200) {
+                        alert("新增成功")
+                        location.reload()
+                    } else {
+                        alert("新增失败")
+                        location.reload()
+                    }
+                }
+            })
+
+        }
+    }
+    var search = () => {
+        var name = $("#searchUser").val()
+        var geturl = url + user.search
+        var parm = {
+            "name": name
+        }
+        $.ajax({
+            url: geturl,
+            type: "post",
+            contentType: 'application/json',
+            data: JSON.stringify(parm),
+            headers: {
+                "Authorization": token
+            }
+            ,
+            success: function (res) {
+                console.log(res)
+            }
+        })
+    }
+    var delete1 = (id) => {
+        $.ajax({
+            url: url + user.delete,
+            data: {
+                "id": id
+            },
+            success: function (res) {
+                alert(res.data.msg)
+                location.reload()
+            }
+        })
+    }
+</script>

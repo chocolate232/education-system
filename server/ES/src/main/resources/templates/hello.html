@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload</title>
+</head>
+<body>
+<h1>File Upload</h1>
+<form id="fileUploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput">
+    <button type="submit">Upload</button>
+</form>
+<script>
+    const form = document.getElementById('fileUploadForm');
+    const fileInput = document.getElementById('fileInput');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent form submission and page refresh
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]); // Append file to form data
+        fetch('/upload', { // Send form data to server endpoint
+            method: 'POST',
+            body: formData,
+            headers: { } // Set content type header for file upload
+        })
+            .then(response => response.text()) // Expect a text response from server
+            .then(data => { console.log(data); }) // Log the response data to the console
+            .catch(error => console.error(error)); // Log any errors to the console
+    });
+</script>
+</body>
+</html>

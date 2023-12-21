@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/login.css">
+    <script src="./js/jquery-3.3.1.min.js"></script>
+    <script src="./js/public.js"></script>
+</head>
+
+<body>
+    <div>
+        <div class='login_form'>
+            <div>
+                <div class='login_switch_button'>
+                    <div class='login_switch_button_line'>
+                        <button>登录</button>
+                    </div>
+                    <div class='login_switch_button_line'>
+                        <button>注册</button>
+                    </div>
+
+                </div>
+            </div>
+            <h1 class='login_label'>
+                register
+            </h1>
+            <div class='input_margin'>
+                <div class='input_size'>
+                    <input placeholder='账号'name='username' id="username">
+                    </input>
+                </div>
+            </div>
+            <div class='input_margin'>
+                <div class='input_size'>
+                    <input placeholder='密码' name='password' id="password">
+                    </input>
+                </div>
+            </div>
+            <div class='input_margin'>
+                <div class='input_size'>
+                    <input placeholder='姓名'  name='name' id="name">
+                    </input>
+                </div>
+            </div>
+
+            <div class='login_button_margin'>
+                <div class='login_button_size'>
+                    <button onClick=register()> 注册</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    $(document).ready(function () {
+        $(".login_switch_button_line>button").hover(
+            function () {
+                $(this).css("background-color", "#fcedfc");
+            },
+            function () {
+                $(this).css("background-color", "#fff");
+            }
+        );
+        $(".login_switch_button_line:first-child>button").click(
+            function () {
+                location.href = "login.html";
+            }
+        );
+        register = () => {
+            var geturl = url + user.register;
+            var username = $("#username").val()
+            var password = $("#password").val()
+            var name = $("#name").val()
+
+            var parm = {
+                "username": username,
+                "password": password,
+                "name":name
+            }
+            $.ajax({
+                url: geturl,
+                type: "post",
+                contentType: 'application/json',
+                data: JSON.stringify(parm),
+                success: function (res) {
+                    if (res.data.state == 400) {
+                        alert("账号已存在")
+                    }
+                    else if (res.data.state == 200) {
+                        alert("注册成功")
+                    } else {
+                        alert("注册失败")
+                    }
+                }
+            })
+        }
+    })
+</script>
